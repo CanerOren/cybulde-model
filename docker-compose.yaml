@@ -40,7 +40,6 @@ services:
 
   app-dev:
     <<: *APP_TEMPLATE
-    platform: linux/amd64
     container_name: cybulde-model-dev-container
     ports:
       - ${LOCAL_DEV_MLFLOW_SERVER_PORT}:${LOCAL_DEV_MLFLOW_SERVER_PORT}

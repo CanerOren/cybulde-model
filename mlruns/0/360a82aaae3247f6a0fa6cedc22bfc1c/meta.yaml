@@ -1,0 +1,14 @@
+artifact_uri: file:///app/mlruns/0/360a82aaae3247f6a0fa6cedc22bfc1c/artifacts
+end_time: 1764214947851
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 360a82aaae3247f6a0fa6cedc22bfc1c
+run_name: rambunctious-wasp-20
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1764214947840
+status: 3
+tags: []
+user_id: caner

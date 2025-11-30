@@ -1,9 +1,13 @@
 from hydra.core.config_store import ConfigStore
 from pydantic.dataclasses import dataclass
+from dataclasses import field
+
+
+from cybulde.configs_schemas.infrastructure.infrastructure_schema import InfrastructureConfig
 
 @dataclass 
 class Config:
-    hello: str = "world"
+    infrastructure: InfrastructureConfig = field(default_factory=InfrastructureConfig)
 
 def setup_config() -> None:
     cs = ConfigStore.instance()

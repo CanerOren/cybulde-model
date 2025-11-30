@@ -1,0 +1,14 @@
+artifact_uri: file:///app/mlruns/0/a86c7738b18a43fea5103c5629f43ba2/artifacts
+end_time: 1764215070961
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a86c7738b18a43fea5103c5629f43ba2
+run_name: bald-frog-879
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1764215070950
+status: 3
+tags: []
+user_id: caner

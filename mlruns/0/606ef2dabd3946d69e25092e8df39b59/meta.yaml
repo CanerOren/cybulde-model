@@ -1,0 +1,14 @@
+artifact_uri: file:///app/mlruns/0/606ef2dabd3946d69e25092e8df39b59/artifacts
+end_time: 1764445973708
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 606ef2dabd3946d69e25092e8df39b59
+run_name: righteous-stoat-391
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1764445973695
+status: 3
+tags: []
+user_id: caner

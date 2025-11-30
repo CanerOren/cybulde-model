@@ -1,0 +1,14 @@
+artifact_uri: file:///app/mlruns/0/baf69c0feb114dab9c76abf5d9562042/artifacts
+end_time: 1764215215179
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: baf69c0feb114dab9c76abf5d9562042
+run_name: gentle-hare-60
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1764215215167
+status: 3
+tags: []
+user_id: caner

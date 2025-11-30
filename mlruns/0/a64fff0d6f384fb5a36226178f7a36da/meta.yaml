@@ -1,0 +1,14 @@
+artifact_uri: file:///app/mlruns/0/a64fff0d6f384fb5a36226178f7a36da/artifacts
+end_time: 1764460707075
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a64fff0d6f384fb5a36226178f7a36da
+run_name: enchanting-flea-928
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1764460707063
+status: 3
+tags: []
+user_id: caner

@@ -1,0 +1,14 @@
+artifact_uri: file:///app/mlruns/0/a2068c03f4d4423c93ed4413c2971905/artifacts
+end_time: 1764214166278
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a2068c03f4d4423c93ed4413c2971905
+run_name: stately-bird-968
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1764214166264
+status: 3
+tags: []
+user_id: caner
