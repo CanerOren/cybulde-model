@@ -1,0 +1,33 @@
+from typing import Optional
+from dataclasses import dataclass
+
+from hydra.core.config_store import ConfigStore
+from omegaconf import MISSING
+
+from cybulde.configs_schemas.models import backbone_schemas, adapter_schemas, head_schemas
+
+@dataclass
+class ModelConfig:
+    _target_: str = MISSING
+
+
+@dataclass
+class BinaryTextClassificationConfig(ModelConfig):
+    _target_: str = "cybulde.models.models.BinaryTextClassificationModel"
+    backbone: backbone_schemas.BackboneConfig = MISSING
+    adapter: Optional[adapter_schemas.AdapterConfig] = None
+    head: head_schemas.HeadConfig = MISSING
+
+
+def setup_config() -> None:
+    backbone_schemas.setup_config()
+    adapter_schemas.setup_config()
+    head_schemas.setup_config()
+    
+    cs = ConfigStore.instance()
+    cs.store(
+        name="binary_text_classification_model_schema",
+        group="tasks/lightning_module/model",
+        node=BinaryTextClassificationConfig
+    )
+    
