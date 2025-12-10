@@ -3,15 +3,19 @@ from transformers import AutoConfig, AutoModel, BatchEncoding
 from transformers.modeling_outputs import BaseModelOutputWithPooling
 
 from cybulde.utils.io_utils import translate_gcs_dir_to_local
-
+from cybulde.data_modules.transformations import Transformation
 
 class Backbone(nn.Module):
-    pass
+    def __init__(self, transformation: Transformation) -> None:
+        super().__init__()
+        self.transformation = transformation
 
+    def get_transformation(self) -> Transformation:
+        return self.transformation
 
 class HuggingFaceBackbone(Backbone):
-    def __init__(self, pretrained_model_name_or_path: str, pretrained: bool = False) -> None:
-        super().__init__()
+    def __init__(self, pretrained_model_name_or_path: str,  transformation: Transformation, pretrained: bool = False) -> None:
+        super().__init__(transformation )
         
         self.backbone = self.get_backbone(pretrained_model_name_or_path, pretrained)
 

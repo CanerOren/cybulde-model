@@ -9,11 +9,17 @@ class TransformationConfig:
     _target_: str = MISSING
 
 @dataclass
-class HuggingFaceTokenizationTransformationConfig:
+class HuggingFaceTokenizationTransformationConfig(TransformationConfig):
     _target_: str = "cybulde.data_modules.transformations.HuggingFaceTokenizationTransformation"
     pretrained_tokenizer_name_or_path: str = MISSING
     max_sequence_length: int = MISSING
 
+
+@dataclass
+class CustomHuggingFaceTokenizationTransformationConfig(HuggingFaceTokenizationTransformationConfig):
+    pretrained_tokenizer_name_or_path: str = "gs://cybulde_emkademy/data/processed/rebalanced_splits/trained_tokenizer"  
+    max_sequence_length: int = 100
+    
 
 def setup_config() -> None:
     cs = ConfigStore.instance()

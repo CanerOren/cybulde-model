@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from cybulde.configs_schemas.config_schema import Config
 
 
-@get_config(config_path="../configs", config_name="config")
+@get_config(config_path="../configs", config_name="config", to_object=False, return_dict_config=True)
 def generate_final_config(config: "Config"):
     with activate_mlflow(
         config.infrastructure.mlflow.experiment_name, 

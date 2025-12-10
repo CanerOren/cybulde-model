@@ -1,5 +1,6 @@
 from typing import Optional
 
+from cybulde.data_modules.transformations import Transformation
 from torchmetrics.classification import BinaryAccuracy, BinaryF1Score, BinaryConfusionMatrix
 from transformers import BatchEncoding
 from torch import Tensor
@@ -10,7 +11,7 @@ from cybulde.training.loss_functions import LossFunction
 from cybulde.training.shedulers import LightningScheduler
 from cybulde.utils.torch_utils import plot_confusion_matrix
 
-class BinaryTextClassificationLightningModule(TrainingLightningModule):
+class BinaryTextClassificationTrainingLightningModule(TrainingLightningModule):
     def __init__(
         self,
         model: Model,
@@ -77,3 +78,6 @@ class BinaryTextClassificationLightningModule(TrainingLightningModule):
         confusion_matrix = self.validation_confusion_matrix()
         figure = plot_confusion_matrix(confusion_matrix, ["0", "1"])
         self.experiment.log_figure(figure)
+
+    def get_transformation(self) -> Transformation:
+        return self.model.get_transformation()

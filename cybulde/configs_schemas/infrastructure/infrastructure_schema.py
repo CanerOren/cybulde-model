@@ -2,6 +2,7 @@ from dataclasses import dataclass,field
 from typing import Optional
 
 from omegaconf import SI
+from hydra.core.config_store import ConfigStore
 
 #from cybulde.configs_schemas.infrastructure_new.instance_group_creator_configs import InstanceGroupCreatorConfig
 
@@ -18,7 +19,7 @@ class MLFlowConfig:
         "${.mlflow_external_tracking_uri}/#/experiments/${.experiment_id}/runs/${.run_id}"
     )
     artifact_uri: Optional[str] = None
-    block_mlflow: bool = False
+    # block_mlflow: bool = False
 
 
 @dataclass
@@ -27,3 +28,11 @@ class InfrastructureConfig:
     zone: str = "europe-west4-a"
     #instance_group_creator: InstanceGroupCreatorConfig = InstanceGroupCreatorConfig()
     mlflow: MLFlowConfig = field(default_factory=MLFlowConfig)
+
+
+def setup_config() -> None:
+    cs = ConfigStore.instance(
+        name="infrastructure_schema",
+        group="infrastructure",
+        node=InfrastructureConfig
+    )

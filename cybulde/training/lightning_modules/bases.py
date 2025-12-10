@@ -10,6 +10,8 @@ from cybulde.models.models import Model
 from cybulde.training.shedulers import LightningScheduler
 from cybulde.training.loss_functions import LossFunction
 from cybulde.utils.utils import get_logger
+from cybulde.data_modules.transformations import Transformation
+
 
 PartialOptimizerType = Callable[[Union[Iterable[Tensor], dict[str, Iterable[Tensor]]]], Optimizer]
 
@@ -45,4 +47,8 @@ class TrainingLightningModule(LightningModule):
 
     @abstractmethod
     def validation_step(self, batch: Any, batch_idx: int) -> Tensor:
+        ...
+
+    @abstractmethod
+    def get_transformation(self) -> Transformation:
         ...

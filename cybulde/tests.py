@@ -1,18 +1,24 @@
+import hydra
+from hydra.utils import instantiate
+from omegaconf import DictConfig, OmegaConf
 
-from cybulde.data_modules.transformations import HuggingFaceTokenizationTransformation
-from cybulde.models.backbones import HuggingFaceBackbone
+from cybulde.configs_schemas.training.training_task_schemas import setup_config
 
-pretrained_tokenizer_name_or_path = "gs://cybulde_emkademy/data/processed/rebalanced_splits/trained_tokenizer"
-max_sequence_length = 72
-tokenizer = HuggingFaceTokenizationTransformation(pretrained_tokenizer_name_or_path, max_sequence_length)
+setup_config()
 
-texts = ["hi! how are you?"]
-encodings = tokenizer(texts)
+@hydra.main(config_name="test_training_task", version_base=None)
+def main(config: DictConfig) -> None:
+    print(60 * "#")
+    print(OmegaConf.to_yaml(config))
+    print(60 * "#")
 
-backbone = HuggingFaceBackbone(pretrained_model_name_or_path="bert-base-uncased", pretrained=False)
-print(backbone)
+    # model = instantiate(config)
+    
+    # texts = ["Hello how are you?"]
+    # encodings = model.backbone.transformation(texts)
 
-output = backbone(encodings)
+    # output = model(encodings)
+    # print(f"{output.shape=}")
 
-print(output)
-print(output.shape)
+if __name__ == "__main__":
+    main()

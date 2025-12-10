@@ -28,3 +28,15 @@ def set_experiment(experiment_name: Optional[str] = None) -> None:
         pass
 
     mlflow.set_experiment(experiment_name)
+
+
+def log_artifacts_for_reproducibility() -> None:
+    locations_to_store = [
+        "./cybulde",
+        "./docker",
+        "./pyproject.toml",
+        "./poetry.lock"
+    ]
+
+    for location_to_store in locations_to_store:
+        mlflow.log_artifact(locations_to_store, "reproduction")

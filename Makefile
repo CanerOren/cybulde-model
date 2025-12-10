@@ -47,7 +47,7 @@ generate-final-config-local: up
 	@$(DOCKER_COMPOSE_EXEC) python cybulde/generate_final_config.py ${OVERRIDES} 
 	
 ## Run tasks
-local-run-tasks : up
+local-run-tasks : generate-final-config-local
 	$(DOCKER_COMPOSE_EXEC) python ./cybulde/run_tasks.py
 
 ## Starts jupyter lab

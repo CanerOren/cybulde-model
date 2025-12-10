@@ -1,0 +1,16 @@
+_target_: cybulde.data_modules.data_modules.TextClassificationDataModule
+batch_size: ???
+shuffle: false
+num_workers: 8
+pin_memory: true
+drop_last: true
+persistent_workers: false
+train_df_path: gs://cybulde_emkademy/data/processed/rebalanced_splits/train.parquet
+dev_df_path: gs://cybulde_emkademy/data/processed/rebalanced_splits/dev.parquet
+test_df_path: gs://cybulde_emkademy/data/processed/rebalanced_splits/test.parquet
+transformation:
+  _target_: cybulde.data_modules.transformations.HuggingFaceTokenizationTransformation
+  pretrained_tokenizer_name_or_path: gs://cybulde_emkademy/data/processed/rebalanced_splits/trained_tokenizer
+  max_sequence_length: '100'
+text_column_name: cleaned_text
+label_column_name: label

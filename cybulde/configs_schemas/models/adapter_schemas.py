@@ -1,5 +1,5 @@
 from typing import Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from hydra.core.config_store import ConfigStore
 
 from omegaconf import MISSING
@@ -13,15 +13,20 @@ class AdapterConfig:
 @dataclass
 class MLPWithPoolingConfig(AdapterConfig):
     _target_: str = "cybulde.models.adapters.MLPWithPooling"
-    output_feature_size: list[int] = MISSING
+    output_feature_sizes: list[int] = MISSING
     biases: Optional[list[bool]] = None
     activation_fns: Optional[list[Optional[str]]] = None
     dropout_drop_probs: Optional[list[float]] = None
     batch_norms: Optional[list[bool]] = None
-    orders: str = "LABDN"
+    order: str = "LABDN"
     standardize_input: bool = True
     pooling_method: Optional[str] = None
     output_attribute_to_use: Optional[str] = None
+
+@dataclass
+class PoolerOutputAdapterConfig(MLPWithPoolingConfig):
+    output_feature_sizes: list[int] = field(default_factory=lambda: [-1])
+    output_attribute_to_use: str = "pooler_output"
 
 
 def setup_config() -> None:

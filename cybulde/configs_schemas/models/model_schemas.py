@@ -1,5 +1,5 @@
 from typing import Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
@@ -12,12 +12,17 @@ class ModelConfig:
 
 
 @dataclass
-class BinaryTextClassificationConfig(ModelConfig):
+class BinaryTextClassificationModelConfig(ModelConfig):
     _target_: str = "cybulde.models.models.BinaryTextClassificationModel"
     backbone: backbone_schemas.BackboneConfig = MISSING
     adapter: Optional[adapter_schemas.AdapterConfig] = None
     head: head_schemas.HeadConfig = MISSING
 
+@dataclass
+class BertTinyBinaryTextClassificationModelConfig(BinaryTextClassificationModelConfig):
+    backbone: backbone_schemas.BackboneConfig = field(default_factory=backbone_schemas.BertTinyHuggingFaceBackboneConfig)
+    adapter: Optional[adapter_schemas.AdapterConfig] = field(default_factory=adapter_schemas.PoolerOutputAdapterConfig)
+    head: head_schemas.HeadConfig = field(default_factory=head_schemas.BinaryClassificationSigmoidHead)
 
 def setup_config() -> None:
     backbone_schemas.setup_config()
@@ -28,6 +33,10 @@ def setup_config() -> None:
     cs.store(
         name="binary_text_classification_model_schema",
         group="tasks/lightning_module/model",
-        node=BinaryTextClassificationConfig
+        node=BinaryTextClassificationModelConfig
     )
     
+    cs.store(
+        name="test_model",
+        node=BertTinyBinaryTextClassificationModelConfig
+    )
