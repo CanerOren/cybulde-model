@@ -1,13 +1,12 @@
 from typing import Any, Callable, Optional, Protocol
 
-from cybulde.data_modules.datasets import TextClassificationDataset
-from cybulde.data_modules.transformations import HuggingFaceTokenizationTransformation
 from lightning.pytorch import LightningDataModule
 from torch.utils.data import BatchSampler,DataLoader,Dataset,Sampler,default_collate
 from torch import Tensor
 from transformers import BatchEncoding
 
-
+from cybulde.data_modules.datasets import TextClassificationDataset
+from cybulde.models.transformations import HuggingFaceTokenizationTransformation, Transformation
 
 
 class DataModule(LightningDataModule):
@@ -53,7 +52,7 @@ class DataModule(LightningDataModule):
 
 
 class PartialDataModule(Protocol):
-    def __call__(self, transformation: HuggingFaceTokenizationTransformation) -> DataModule:
+    def __call__(self, transformation: Transformation) -> DataModule:
         ...
 
 
@@ -103,7 +102,7 @@ class TextClassificationDataModule(DataModule):
     def setup(self, stage: Optional[str] = None) -> None:
         if stage == "fit" or stage is None:
             self.train_dataset = TextClassificationDataset(self.train_df_path, self.text_column_name, self.label_column_name)
-            self.dev_Dataset = TextClassificationDataset(self.dev_df_path, self.text_column_name, self.label_column_name)
+            self.dev_dataset = TextClassificationDataset(self.dev_df_path, self.text_column_name, self.label_column_name)
 
         if stage == "test":
             self.test_dataset = TextClassificationDataset(self.test_df_path, self.text_column_name, self.label_column_name)
@@ -111,7 +110,7 @@ class TextClassificationDataModule(DataModule):
     def train_dataloader(self) -> DataLoader:
         return self.initialize_dataloader(self.train_dataset, is_test=False)
 
-    def validation_dataloader(self) -> DataLoader:
+    def val_dataloader(self) -> DataLoader:
         return self.initialize_dataloader(self.dev_dataset, is_test=True)
 
     def test_dataloader(self) -> DataLoader:

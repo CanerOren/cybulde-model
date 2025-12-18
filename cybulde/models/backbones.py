@@ -3,7 +3,7 @@ from transformers import AutoConfig, AutoModel, BatchEncoding
 from transformers.modeling_outputs import BaseModelOutputWithPooling
 
 from cybulde.utils.io_utils import translate_gcs_dir_to_local
-from cybulde.data_modules.transformations import Transformation
+from cybulde.models.transformations import Transformation
 
 class Backbone(nn.Module):
     def __init__(self, transformation: Transformation) -> None:

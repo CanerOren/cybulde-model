@@ -4,12 +4,17 @@ from dataclasses import dataclass
 from omegaconf import MISSING
 from hydra.core.config_store import ConfigStore
 
+from cybulde.utils.mixins import LoggableParamsMixin
+
 
 @dataclass
-class OptimizerConfig:
+class OptimizerConfig(LoggableParamsMixin):
     _target_: str = MISSING
     _partial_: bool = True
     lr: float = MISSING
+
+    def loggable_params(self) -> list[str]:
+        return ["_target_", "lr"]
 
 
 @dataclass

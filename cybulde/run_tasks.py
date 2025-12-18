@@ -10,13 +10,7 @@ from cybulde.utils.utils import get_logger
 from cybulde.utils.torch_utils import get_local_rank
 
 @get_config(config_path="../configs/automatically_generated", config_name="config", to_object=False, return_dict_config=True)
-def entrypoint(config: Config) -> None:
-
-    print(60 * "#")
-    print(OmegaConf.to_yaml(config, resolve= True))
-    print(60 * "#")
-
-    return(0)
+def run_tasks(config: Config) -> None:
     logger = get_logger(__file__)
     assert config.infrastructure.mlflow.run_id is not None, "Run id has to be set for running tasks"
 
@@ -35,4 +29,4 @@ def entrypoint(config: Config) -> None:
         task.run(config=config, task_config=task_config)
 
 if __name__ == "__main__":
-    entrypoint() # type: ignore
+    run_tasks() # type: ignore

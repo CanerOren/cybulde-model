@@ -39,7 +39,7 @@ class CommonLightningScheduler(LightningScheduler):
         return {
             "scheduler": self.scheduler(optimizer),
             "interval": self.interval,
-            "frequency": self.fequency,
+            "frequency": self.frequency,
             "monitor": self.monitor,
             "strict": self.strict,
             "name": self.name

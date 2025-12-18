@@ -5,9 +5,11 @@ from hydra.core.config_store import ConfigStore
 from omegaconf import SI
 
 from cybulde.configs_schemas.trainer import logger_schemas, callbacks_schemas
+from cybulde.utils.mixins import LoggableParamsMixin
+
 
 @dataclass
-class TrainerConfig:
+class TrainerConfig(LoggableParamsMixin):
     _target_: str = "lightning.pytorch.trainer.trainer.Trainer"
     accelerator: str = "auto"
     strategy: str = "ddp_find_unused_parameters_true"
@@ -15,13 +17,11 @@ class TrainerConfig:
     num_nodes: int = 1 # SI("${}")
     precision: str = "16-mixed"
     logger: Optional[list[logger_schemas.LoggerConfig]] = field(default_factory=lambda: []) # type: ignore
-    _logger_dict: dict[str, logger_schemas.LoggerConfig] = field(default_factory=lambda: {})
     callbacks: Optional[list[callbacks_schemas.CallbackConfig]] = field(default_factory=lambda: []) # type: ignore
-    _callbacks_dict: dict[str, callbacks_schemas.CallbackConfig] = field(default_factory=lambda: {})
     fast_dev_run: bool = False
     max_epochs: Optional[int] = None
     min_epochs: Optional[int] = None
-    nax_steps: int = -1
+    max_steps: int = -1
     min_steps: Optional[int] = None
     max_time: Optional[str] = None
     limit_train_batches: Optional[float] = 1
@@ -41,13 +41,17 @@ class TrainerConfig:
     gradient_clip_algorithm: Optional[str] = "Value"
     deterministic: Optional[bool] = None
     benchmark: Optional[bool] = None
-    inferecence_mode: bool = True
+    inference_mode: bool = True
     use_distributed_sampler: bool = True
     detect_anomaly: bool = False
     barebones: bool = False
     sync_batchnorm: bool = True
     reload_dataloaders_every_n_epochs: int = 0
     default_root_dir: Optional[str] = "./data/pytorch-lightning"
+
+    def loggable_params(self) -> list[str]:
+        return ["max_epochs", "max_steps", "strategy", "precision"]
+    
 
 @dataclass
 class GPUDev(TrainerConfig):

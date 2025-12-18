@@ -4,11 +4,16 @@ from dataclasses import dataclass, field
 from omegaconf import MISSING
 from hydra.core.config_store import ConfigStore
 
+from cybulde.utils.mixins import LoggableParamsMixin
+
 
 @dataclass
-class SchedulerConfig:
+class SchedulerConfig(LoggableParamsMixin):
     _target_: str = MISSING
     _partial_: bool = True
+
+    def loggable_params(self) -> list[str]:
+        return ["_target_"]
 
 
 @dataclass
@@ -22,7 +27,7 @@ class ReduceLROnPlateauSchedulerConfig(SchedulerConfig):
     cooldown: int = 0
     min_lr: float = 0
     eps: float = 1e-8
-    verbose: bool = False
+    #verbose: bool = field(default=False, init=False)
 
 
 @dataclass

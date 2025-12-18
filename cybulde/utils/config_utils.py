@@ -39,6 +39,21 @@ def get_config(config_path: str, config_name: str, to_object: bool = True, retur
     return main_decorator
 
 
+def get_config_and_dict_config(config_path: str, config_name: str) -> Any:
+    setup_config()
+    setup_logger()
+
+    def main_decorator(task_function: Any) -> Any:
+        @hydra.main(config_path=config_path, config_name=config_name, version_base=None)
+        def decorated_main(dict_config: Optional[DictConfig] = None) -> Any:
+            config = OmegaConf.to_object(dict_config)
+            return task_function(config, dict_config)     
+
+        return decorated_main
+    
+    return main_decorator
+
+
 def setup_config() -> None:
     config_schema.setup_config()
 
@@ -49,7 +64,7 @@ def setup_logger() -> None:
     logging.config.dictConfig(config)
 
 
-def save_config_as_yaml(config: "Config", save_path: str) -> None:
+def save_config_as_yaml(config: Union["Config", DictConfig], save_path: str) -> None:
     text_io = StringIO()
     text_io.writelines(
         [

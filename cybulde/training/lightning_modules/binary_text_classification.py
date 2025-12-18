@@ -1,17 +1,20 @@
 from typing import Optional
+from collections import defaultdict
 
-from cybulde.data_modules.transformations import Transformation
+from cybulde.models.transformations import Transformation
 from torchmetrics.classification import BinaryAccuracy, BinaryF1Score, BinaryConfusionMatrix
 from transformers import BatchEncoding
+import torch
 from torch import Tensor
+import mlflow
 
-from cybulde.training.lightning_modules.bases import PartialOptimizerType, TrainingLightningModule
+from cybulde.training.lightning_modules.bases import PartialOptimizerType, ModelStateDictExportingTrainingLightningModule
 from cybulde.models.models import Model
 from cybulde.training.loss_functions import LossFunction
-from cybulde.training.shedulers import LightningScheduler
+from cybulde.training.schedulers import LightningScheduler
 from cybulde.utils.torch_utils import plot_confusion_matrix
 
-class BinaryTextClassificationTrainingLightningModule(TrainingLightningModule):
+class BinaryTextClassificationTrainingLightningModule(ModelStateDictExportingTrainingLightningModule):
     def __init__(
         self,
         model: Model,
@@ -35,6 +38,9 @@ class BinaryTextClassificationTrainingLightningModule(TrainingLightningModule):
         self.training_confusion_matrix = BinaryConfusionMatrix()
         self.validation_confusion_matrix = BinaryConfusionMatrix()
 
+        self.train_step_outputs = defaultdict(list)
+        self.validation_step_outputs = defaultdict(list)
+
     def forward(self, text: BatchEncoding) -> Tensor:
         return self.model(text)
     
@@ -52,14 +58,22 @@ class BinaryTextClassificationTrainingLightningModule(TrainingLightningModule):
         self.log("training_accuracy", self.training_accuracy, on_step=False, on_epoch=True)
         self.log("training_f1_score", self.training_f1_score, on_step=False, on_epoch=True)
 
+        self.train_step_outputs["logits"].append(logits)
+        self.train_step_outputs["labels"].append(labels)
+
         return loss
     
-    def training_epoch_end(self, outputs: list[Tensor]) -> None:
-        confusion_matrix = self.training_confusion_matrix()
-        figure = plot_confusion_matrix(confusion_matrix, ["0", "1"])
-        self.experiment.log_figure(figure)
+    def on_train_epoch_end(self) -> None:
+        all_logits = torch.stack(self.train_step_outputs["logits"])
+        all_labels = torch.stack(self.train_step_outputs["labels"])
 
-    def validation_step(self, batch: tuple[BatchEncoding, Tensor], batch_idx: int) -> Tensor:
+        confusion_matrix = self.training_confusion_matrix(all_logits, all_labels)
+        figure = plot_confusion_matrix(confusion_matrix, ["0", "1"])
+        mlflow.log_figure(figure, "training_confusion_matrix.png")
+
+        self.train_step_outputs = defaultdict(list)
+
+    def validation_step(self, batch: tuple[BatchEncoding, Tensor], batch_idx: int) -> dict[str, Tensor]:
         texts, labels = batch
         logits = self(texts)
 
@@ -72,12 +86,24 @@ class BinaryTextClassificationTrainingLightningModule(TrainingLightningModule):
         self.log("validation_accuracy", self.validation_accuracy, on_step=False, on_epoch=True)
         self.log("validation_f1_score", self.validation_f1_score, on_step=False, on_epoch=True)
 
-        return loss
+        self.validation_step_outputs["logits"].append(logits)
+        self.validation_step_outputs["labels"].append(labels)
+
+        return {"loss": loss, "predictions": logits, "labels": labels}
     
-    def validation_epoch_end(self, outputs: list[Tensor]) -> None:
-        confusion_matrix = self.validation_confusion_matrix()
+    def on_validation_epoch_end(self) -> None:
+        all_logits = torch.stack(self.validation_step_outputs["logits"])
+        all_labels = torch.stack(self.validation_step_outputs["labels"])
+
+        confusion_matrix = self.validation_confusion_matrix(all_logits , all_labels)
         figure = plot_confusion_matrix(confusion_matrix, ["0", "1"])
-        self.experiment.log_figure(figure)
+        mlflow.log_figure(figure, "validation_confusion_matrix.png")
+
+        self.validation_step_outputs = defaultdict(list)
+
 
     def get_transformation(self) -> Transformation:
         return self.model.get_transformation()
+    
+    def export_model_state_dict(self, checkpoint_path) -> str:
+        return self.common_export_model_state_dict(checkpoint_path)

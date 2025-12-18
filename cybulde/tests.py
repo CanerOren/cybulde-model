@@ -1,24 +1,7 @@
-import hydra
-from hydra.utils import instantiate
-from omegaconf import DictConfig, OmegaConf
+from cybulde.utils.mlflow_utils import get_all_experiment_ids, get_best_run
 
-from cybulde.configs_schemas.training.training_task_schemas import setup_config
+experiments = get_all_experiment_ids()
+print(f"{experiments=}")
 
-setup_config()
-
-@hydra.main(config_name="test_training_task", version_base=None)
-def main(config: DictConfig) -> None:
-    print(60 * "#")
-    print(OmegaConf.to_yaml(config))
-    print(60 * "#")
-
-    # model = instantiate(config)
-    
-    # texts = ["Hello how are you?"]
-    # encodings = model.backbone.transformation(texts)
-
-    # output = model(encodings)
-    # print(f"{output.shape=}")
-
-if __name__ == "__main__":
-    main()
+best_runs = get_best_run()
+print(f"{best_runs=}")

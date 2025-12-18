@@ -33,9 +33,9 @@ def plot_confusion_matrix(confusion_matrix: Tensor, class_names: list[str]) -> A
     plt.title("Confusion Matrix")
     plt.ylabel("Actual label", fontsize=20)
     plt.xlabel("Predicted label", fontsize=20)
-    plt.titht_layout()
+    plt.tight_layout()
 
-    return plt.figure
+    return plt.gcf()
 
 
 def get_local_rank() -> int:

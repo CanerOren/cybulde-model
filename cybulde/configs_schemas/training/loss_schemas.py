@@ -3,10 +3,15 @@ from dataclasses import dataclass
 from omegaconf import MISSING
 from hydra.core.config_store import ConfigStore
 
+from cybulde.utils.mixins import LoggableParamsMixin
+
 
 @dataclass
-class LossFunctionConfig:
+class LossFunctionConfig(LoggableParamsMixin):
     _target_: str = MISSING
+
+    def loggable_params(self) -> list[str]:
+        return ["_target_"]
 
 
 @dataclass

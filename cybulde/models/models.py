@@ -6,7 +6,7 @@ from cybulde.models.adapters import Adapter
 
 from cybulde.models.backbones import Backbone
 from cybulde.models.heads import Head
-from cybulde.data_modules.transformations import Transformation
+from cybulde.models.transformations import Transformation
 
 
 class Model(nn.Module):
