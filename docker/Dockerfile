@@ -1,4 +1,4 @@
-FROM python:3.12-bullseye
+FROM python:3.10-bullseye
 
 ARG USER_ID
 ARG USER_NAME
@@ -11,6 +11,15 @@ ENV \
   PATH="/usr/local/gcloud/google-cloud-sdk/bin:${HOME}/.local/bin:${VIRTUAL_ENV}/bin:${PATH}" \
   PYTHONPATH="/app:${PYTHONPATH}" \
   BUILD_POETRY_LOCK="${HOME}/poetry.lock.build"
+
+# ------------------------------------------------------------
+# PyTorch CUDA compatibility (quick-success line)
+# common-cu113 VM image typically yields ~510.x driver; cu116 wheels work reliably.
+# ------------------------------------------------------------
+ARG TORCH_CUDA_TAG=cu116
+ARG TORCH_VERSION=1.13.1
+ARG TORCHVISION_VERSION=0.14.1
+ARG TORCHAUDIO_VERSION=0.13.1
 
 RUN apt-get -qq update \
     && apt-get -qq -y install vim gcc curl git build-essential libb64-dev software-properties-common tzdata \
@@ -39,8 +48,21 @@ WORKDIR /app
 
 RUN poetry config virtualenvs.create false \
     && python -m venv ${VIRTUAL_ENV} \
-    && pip install --upgrade pip setuptools \
-    && poetry install && cp poetry.lock ${BUILD_POETRY_LOCK} \
+    && pip install --upgrade pip setuptools wheel \
+    # Preinstall CUDA wheels (helps caching + avoids transient CPU torch)
+    && pip install \
+        torch==${TORCH_VERSION}+${TORCH_CUDA_TAG} \
+        torchvision==${TORCHVISION_VERSION}+${TORCH_CUDA_TAG} \
+        torchaudio==${TORCHAUDIO_VERSION}+${TORCH_CUDA_TAG} \
+        --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA_TAG} \
+    && poetry install \
+    && cp poetry.lock ${BUILD_POETRY_LOCK} \
+    # Force CUDA wheels again AFTER poetry (poetry may reinstall CPU torch==1.13.1)
+    && pip install --no-deps --force-reinstall \
+        torch==${TORCH_VERSION}+${TORCH_CUDA_TAG} \
+        torchvision==${TORCHVISION_VERSION}+${TORCH_CUDA_TAG} \
+        torchaudio==${TORCHAUDIO_VERSION}+${TORCH_CUDA_TAG} \
+        --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA_TAG} \
     && rm -rf ${HOME}/.cache/*
 
 USER root

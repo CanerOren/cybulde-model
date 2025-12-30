@@ -4,7 +4,7 @@ from typing import Optional
 from omegaconf import SI
 from hydra.core.config_store import ConfigStore
 
-#from cybulde.configs_schemas.infrastructure_new.instance_group_creator_configs import InstanceGroupCreatorConfig
+from cybulde.configs_schemas.infrastructure.instance_group_creator_schemas import InstanceGroupCreatorConfig
 
 
 @dataclass
@@ -24,9 +24,9 @@ class MLFlowConfig:
 
 @dataclass
 class InfrastructureConfig:
-    project_id: str = "cybulde"
-    zone: str = "europe-west4-a"
-    #instance_group_creator: InstanceGroupCreatorConfig = InstanceGroupCreatorConfig()
+    project_id: str = "emkademy-474323"
+    zone: str = "europe-west4-b"
+    instance_group_creator: InstanceGroupCreatorConfig = field(default_factory=InstanceGroupCreatorConfig)
     mlflow: MLFlowConfig = field(default_factory=MLFlowConfig)
 
 

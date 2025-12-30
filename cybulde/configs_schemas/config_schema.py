@@ -15,7 +15,7 @@ from cybulde.configs_schemas.evaluation import model_selector_schemas
 class Config:
     infrastructure: infrastructure_schema.InfrastructureConfig = field(default_factory=infrastructure_schema.InfrastructureConfig)
     save_last_checkpoint_every_n_train_steps: int = 500
-    seed: int = 123
+    seed: int = 1234
     tasks: dict[str, base_schemas.TaskConfig] = MISSING
     model_selector: Optional[model_selector_schemas.ModelSelectorConfig] = None
     registered_model_name: Optional[str] = None
